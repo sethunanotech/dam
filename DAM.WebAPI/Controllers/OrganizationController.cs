@@ -1,4 +1,6 @@
+using AutoMapper;
 using DAM.Application.Contracts;
+using DAM.Application.DTO.Requests;
 using DAM.Domain.Entities;
 using DAM.Persistence.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +14,15 @@ namespace DAM.WebAPI.Controllers
         private readonly ILogger<OrganizationController> _logger;
         private readonly IOrganization _organizationRepository;
 
-        public OrganizationController(IOrganization organizationRepository, ILogger<OrganizationController> logger)
+        private readonly IMapper _mapper;
+
+        public OrganizationController(IOrganization organizationRepository, 
+            IMapper mapper,
+            ILogger<OrganizationController> logger)
         {
             _logger = logger;
             _organizationRepository = organizationRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -37,19 +44,25 @@ namespace DAM.WebAPI.Controllers
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> Put(Guid Id, Organization organization)
+        public async Task<IActionResult> Put(Guid Id, OrganizationRequest organizationRequest)
         {
-            if (Id != organization.Id)
-            {
-                return BadRequest();
-            }
+            var organization =  _mapper.Map<OrganizationRequest, Organization>(organizationRequest);
+
             await _organizationRepository.UpdateAsync(organization);
             return NoContent();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Organization organization)
+        public async Task<IActionResult> Post(OrganizationRequest organizationRequest)
         {
+            //Magic values to be replaced by the constants / Session Variables
+            var createdBy = "Sethu";
+            var createdOn = DateTime.UtcNow;
+            var organization = _mapper.Map<OrganizationRequest, Organization>(organizationRequest);
+
+            organization.CreatedBy = createdBy;
+            organization.CreatedOn = createdOn;
+
             await _organizationRepository.AddAsync(organization);
             return CreatedAtAction("Get", new {Id =  organization.Id}, organization);
         }

@@ -1,5 +1,7 @@
-﻿using DAM.Application.Contracts;
+﻿using AutoMapper;
+using DAM.Application.Contracts;
 using DAM.Persistence.Data;
+using DAM.Persistence.Handlers;
 using DAM.Persistence.Repositories;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +26,10 @@ namespace DAM.Persistence
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IOrganization, OrganizationRepository>();
 
+            //Automapper Registration
+            var autoMapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperProfile()));
+            IMapper mapper = autoMapper.CreateMapper();
+            services.AddSingleton(mapper);
             //Service registration ends here
         }
 
