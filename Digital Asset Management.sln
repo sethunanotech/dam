@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAM.Application", "DAM.Appl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAM.WebAPI", "DAM.WebAPI\DAM.WebAPI.csproj", "{34AA9928-BFBC-4A25-9A1D-B50ED664F02B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAM.Persistence", "DAM.Persistence\DAM.Persistence.csproj", "{00878453-7AAE-4FE8-97FC-CAC87AAA0900}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAM.Persistence", "DAM.Persistence\DAM.Persistence.csproj", "{00878453-7AAE-4FE8-97FC-CAC87AAA0900}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAM.Infrastructure", "DAM.Infrastructure\DAM.Infrastructure.csproj", "{F8487813-AC87-453C-9BD7-67B5B153CA74}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAM.Infrastructure", "DAM.Infrastructure\DAM.Infrastructure.csproj", "{F8487813-AC87-453C-9BD7-67B5B153CA74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAM.WebAPI.Test", "DAM.WebAPI.Test\DAM.WebAPI.Test.csproj", "{858A4A8B-1E3D-4701-BDEF-42D6B1C76BAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F8487813-AC87-453C-9BD7-67B5B153CA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8487813-AC87-453C-9BD7-67B5B153CA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8487813-AC87-453C-9BD7-67B5B153CA74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{858A4A8B-1E3D-4701-BDEF-42D6B1C76BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{858A4A8B-1E3D-4701-BDEF-42D6B1C76BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{858A4A8B-1E3D-4701-BDEF-42D6B1C76BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{858A4A8B-1E3D-4701-BDEF-42D6B1C76BAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

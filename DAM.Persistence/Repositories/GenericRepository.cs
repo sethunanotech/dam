@@ -9,51 +9,40 @@ namespace DAM.Persistence.Repositories
 {
     public class GenericRepository<T> : IDisposable, IGenericRepository<T> where T : class
     {
-        private readonly static CacheFramework _cacheFramework = CacheFramework.InMemory;
-        private readonly string _cacheKey = $"{typeof(T)}";
-
         protected readonly ApplicationDbContext _dbContext;
-        private readonly Func<CacheFramework, ICacheService> _cacheService;
 
-        public GenericRepository(ApplicationDbContext dbContext, Func<CacheFramework, ICacheService> cacheService)
+        public GenericRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _cacheService = cacheService;
         }
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            if (!_cacheService(_cacheFramework).TryGet(_cacheKey, out IReadOnlyList<T> cachedList)) { 
-                cachedList  = await _dbContext.Set<T>()
+             return await _dbContext.Set<T>()
                                             .AsNoTracking()
                                             .ToListAsync();
-
-                _cacheService(_cacheFramework).Set(_cacheKey, cachedList);
-            }
-            return cachedList;
         }
 
         public async Task AddAsync(T entity)
         {
             await _dbContext.Set<T>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
-            BackgroundJob.Enqueue(() 
-                => RefreshCache());
+            //BackgroundJob.Enqueue(() 
+            //    => RefreshCache());
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
         {
             await _dbContext.Set<T>().AddRangeAsync(entities);
             await _dbContext.SaveChangesAsync();
-            BackgroundJob.Enqueue(() => RefreshCache());
+            //BackgroundJob.Enqueue(() => RefreshCache());
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression)
         {
-            var cachedList = await _dbContext.Set<T>()
+            return await _dbContext.Set<T>()
                                 .Where(expression)
                                 .AsNoTracking()
                                 .ToListAsync();
-            return cachedList;
         }
 
         public async Task<T> GetByIdAsync(Guid id)
@@ -66,7 +55,7 @@ namespace DAM.Persistence.Repositories
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
-            BackgroundJob.Enqueue(() => RefreshCache());
+            //BackgroundJob.Enqueue(() => RefreshCache());
             return entity;
         }
 

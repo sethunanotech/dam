@@ -2,8 +2,20 @@ using DAM.Application;
 using DAM.Infrastructure;
 using DAM.Persistence;
 using DAM.WebAPI.Filters;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//builder.Host.UseSerilog(
+//    (context, services, configuration) => 
+//        configuration
+//            .ReadFrom.Configuration(context.Configuration)
+//            .ReadFrom.Services(services)
+//    );
+builder.Host.UseSerilog();
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
 
 // Add services to the container.
 // Configuring DB Persistence
@@ -31,10 +43,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    Log.Information("Application starts up at {time}", DateTime.UtcNow);
+    app.Run();
+}
+catch(Exception ex)
+{
+    Log.Fatal(ex, "The application has failed to start");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

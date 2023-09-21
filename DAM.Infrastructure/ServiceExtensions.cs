@@ -1,7 +1,9 @@
 ﻿using DAM.Application.Contracts;
+using DAM.Application.Contracts.MultiTenancy;
 using DAM.Domain.Configurations;
 using DAM.Domain.Enums;
 using DAM.Infrastructure.Cache;
+using DAM.Infrastructure.MultiTenancy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,6 +55,9 @@ namespace DAM.Infrastructure
                         return serviceProvider.GetService<InMemoryCacheService>();
                 }
             });
+
+            // Multi Tenant Application
+            services.AddSingleton<ITenantIdentification, QueryStringTenantIdentification>();
         }
     }
 }

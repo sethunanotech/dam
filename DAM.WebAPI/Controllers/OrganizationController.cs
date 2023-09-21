@@ -28,6 +28,7 @@ namespace DAM.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            _logger.LogInformation("Request for All Organization");
             var organizations = await _organizationRepository.GetAllAsync();
             return Ok(organizations);
         }
@@ -35,6 +36,7 @@ namespace DAM.WebAPI.Controllers
         [HttpGet("{Id}")]
         public async Task<IActionResult> Get(Guid Id)
         {
+            _logger.LogInformation($"Request Organization for {Id}");
             var organization = await _organizationRepository.GetByIdAsync(Id);
             if (organization == null)
             {
@@ -46,10 +48,32 @@ namespace DAM.WebAPI.Controllers
         [HttpPut("{Id}")]
         public async Task<IActionResult> Put(Guid Id, OrganizationRequest organizationRequest)
         {
-            var organization =  _mapper.Map<OrganizationRequest, Organization>(organizationRequest);
+            if (organizationRequest == null)
+            {
+                _logger.LogInformation("The Put request is contains null");
+                return BadRequest("The request parameter is null");
+            }
 
-            await _organizationRepository.UpdateAsync(organization);
-            return NoContent();
+            if (!Guid.TryParse(Id.ToString(), out _)) {
+                _logger.LogInformation($"The input value is not valid {Id}");
+                return BadRequest(Id);
+            }
+
+            try
+            {
+                //Map the incoming request object with the expected Organization entity
+                var organization = _mapper.Map<OrganizationRequest, Organization>(organizationRequest);
+
+                organization.LastModifiedBy = "Sethu";
+                organization.LastModifiedOn = DateTime.UtcNow;
+                await _organizationRepository.UpdateAsync(organization);
+                return NoContent();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest();
+            }
         }
 
         [HttpPost]
