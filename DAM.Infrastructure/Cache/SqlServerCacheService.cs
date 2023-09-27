@@ -44,5 +44,12 @@ namespace DAM.Infrastructure.Cache
         {
             _distributedCache?.Remove(cacheKey);
         }
+
+        public void RefreshCache<T>(string cacheKey, T Value)
+        {
+            _distributedCache.Remove(cacheKey);
+            var cacheData = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(Value);
+            _distributedCache.Set(cacheKey, cacheData, _cacheConfigOptions);
+        }
     }
 }

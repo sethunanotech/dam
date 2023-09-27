@@ -3,6 +3,7 @@ using DAM.Application.Contracts;
 using DAM.Application.DTO.Requests;
 using DAM.Domain.Entities;
 using DAM.Persistence.Repositories;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DAM.WebAPI.Controllers
@@ -13,8 +14,11 @@ namespace DAM.WebAPI.Controllers
     {
         private readonly ILogger<OrganizationController> _logger;
         private readonly IOrganization _organizationRepository;
-
         private readonly IMapper _mapper;
+
+        // Variables 
+        private readonly string _cacheKey = "organization";
+        //End
 
         public OrganizationController(IOrganization organizationRepository, 
             IMapper mapper,
@@ -29,7 +33,8 @@ namespace DAM.WebAPI.Controllers
         public async Task<IActionResult> Get()
         {
             _logger.LogInformation("Request for All Organization");
-            var organizations = await _organizationRepository.GetAllAsync();
+
+            var organizations = await _organizationRepository.GetAllAsync(true, _cacheKey);
             return Ok(organizations);
         }
 
@@ -66,7 +71,7 @@ namespace DAM.WebAPI.Controllers
 
                 organization.LastModifiedBy = "Sethu";
                 organization.LastModifiedOn = DateTime.UtcNow;
-                await _organizationRepository.UpdateAsync(organization);
+                await _organizationRepository.UpdateAsync(organization, true, _cacheKey);
                 return NoContent();
             }
             catch(Exception ex)
@@ -87,7 +92,7 @@ namespace DAM.WebAPI.Controllers
             organization.CreatedBy = createdBy;
             organization.CreatedOn = createdOn;
 
-            await _organizationRepository.AddAsync(organization);
+            await _organizationRepository.AddAsync(organization, true, _cacheKey);
             return CreatedAtAction("Get", new {Id =  organization.Id}, organization);
         }
 
@@ -99,7 +104,7 @@ namespace DAM.WebAPI.Controllers
             {
                 return NotFound();
             }
-            await _organizationRepository.RemoveByIdAsync(organization.Id);
+            await _organizationRepository.RemoveByIdAsync(organization.Id, true, _cacheKey);
             return Ok(organization);
         }
     }

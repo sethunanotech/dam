@@ -7,8 +7,8 @@ namespace DAM.Persistence.Repositories
 {
     public class OrganizationRepository : GenericRepository<Organization>, IOrganization
     {
-        public OrganizationRepository(ApplicationDbContext dbContext, Func<CacheFramework, ICacheService> cacheService) 
-            : base(dbContext, cacheService)
+        public OrganizationRepository(ApplicationDbContext dbContext, ICacheService _cacheService) 
+            : base(dbContext, _cacheService)
         {
         }
     }

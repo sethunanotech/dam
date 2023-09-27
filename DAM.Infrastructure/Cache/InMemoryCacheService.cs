@@ -43,5 +43,11 @@ namespace DAM.Infrastructure.Cache
         {
             _memoryCache.Remove(cacheKey);
         }
+
+        public void RefreshCache<T>(string cacheKey, T Value)
+        {
+            _memoryCache.Remove(cacheKey);
+            _memoryCache.Set(cacheKey, Value, _cacheOptions);
+        }
     }
 }

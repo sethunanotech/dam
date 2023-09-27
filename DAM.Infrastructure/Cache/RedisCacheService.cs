@@ -3,6 +3,7 @@ using DAM.Domain.Configurations;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Text;
 
 namespace DAM.Infrastructure.Cache
@@ -47,6 +48,13 @@ namespace DAM.Infrastructure.Cache
         public void Remove(string cacheKey)
         {
             _distributedCache?.Remove(cacheKey);
+        }
+
+        public void RefreshCache<T>(string cacheKey, T Value)
+        {
+            _distributedCache.Remove(cacheKey);
+            var cacheData = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(Value);
+            _distributedCache.Set(cacheKey, cacheData, _cacheConfigOptions);
         }
     }
 }

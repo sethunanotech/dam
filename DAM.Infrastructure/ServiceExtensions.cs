@@ -16,45 +16,47 @@ namespace DAM.Infrastructure
             //InMemory Cache Service Registration
             services.Configure<InMemoryCacheConfiguration>(configuration.GetSection("InMemoryCacheConfiguration"));
             services.AddMemoryCache();
-            services.AddTransient<InMemoryCacheService>();
+            services.AddTransient<ICacheService, InMemoryCacheService>();
             //InMemory Cache Service Registration Completed
 
-            //SQL Server Cache Service Registration
-            services.AddDistributedSqlServerCache(options =>
-            {
-                options.ConnectionString = configuration.GetConnectionString("SQLCacheConnection");
-                options.TableName = "RootCache";
-            });
+            #region SQL Server Cache Service Registration
+            //services.AddDistributedSqlServerCache(options =>
+            //{
+            //    options.ConnectionString = configuration.GetConnectionString("SQLCacheConnection");
+            //    options.TableName = "RootCache";
+            //});
             //SQL Server Cache Service Completed
+            #endregion
 
-            //Redis Cache Service Implementation
-            services.AddStackExchangeRedisCache(options =>
-            {
-                options.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
-                {
-                    EndPoints = { "http://localhost:2456" },
-                    Password = "**********",
-                    Ssl = true
-                };
-                options.InstanceName = "MyRedisCache"; //Optional instance name if any
-            });
-            services.AddTransient<RedisCacheService>();
-            //Redis Cache Service Registration Completed
+            #region Redis Cache Service Implementation
+            //services.AddStackExchangeRedisCache(options =>
+            //{
+            //    options.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
+            //    {
+            //        EndPoints = { "http://localhost:2456" },
+            //        Password = "**********",
+            //        Ssl = true
+            //    };
+            //    options.InstanceName = "MyRedisCache"; //Optional instance name if any
+            //});
+            #endregion
 
-            services.AddTransient<Func<CacheFramework, ICacheService>>(serviceProvider => key =>
-            {
-                switch (key)
-                {
-                    case CacheFramework.InMemory:
-                        return serviceProvider.GetService<InMemoryCacheService>();
-                    case CacheFramework.Redis:
-                        return serviceProvider.GetService<RedisCacheService>();
-                    case CacheFramework.SQLServer:
-                        return serviceProvider.GetService<SqlServerCacheService>();
-                    default:
-                        return serviceProvider.GetService<InMemoryCacheService>();
-                }
-            });
+            #region Cache Registration with Dynamic Cache system
+            //services.AddTransient<Func<CacheFramework, ICacheService>>(serviceProvider => key =>
+            //{
+            //    switch (key)
+            //    {
+            //        case CacheFramework.InMemory:
+            //            return serviceProvider.GetService<InMemoryCacheService>();
+            //        case CacheFramework.Redis:
+            //            return serviceProvider.GetService<RedisCacheService>();
+            //        case CacheFramework.SQLServer:
+            //            return serviceProvider.GetService<SqlServerCacheService>();
+            //        default:
+            //            return serviceProvider.GetService<InMemoryCacheService>();
+            //    }
+            //});
+            #endregion
 
             // Multi Tenant Application
             services.AddSingleton<ITenantIdentification, QueryStringTenantIdentification>();
